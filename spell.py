@@ -1,3 +1,5 @@
+import sys
+
 CONSONANTS = {
     'P': {'initial': 'p', 'short': 'p', 'long': 'pp', 'final': 'p'},
     'T': {'initial': 't', 'short': 't', 'long': 'tt', 'final': 't'},
@@ -152,6 +154,12 @@ BOUNDARIES = set('-!+/#:')
 
 PHONOLOGY = set([*CONSONANTS.keys(), *VOWELS.keys()]).union(BOUNDARIES)
 
+def thread(initial, *functions):
+    nth = initial
+    for fun in functions:
+        nth = fun(nth)
+    return nth
+
 def parse(xsampa):
     segments = []
     for segment in xsampa.split():
@@ -169,3 +177,10 @@ def parse(xsampa):
             segments.append({'sound': segment, 'type': 'boundary'})
     return segments
 
+def spell(xsampa):
+    return thread(xsampa,
+            parse
+            )
+
+if __name__ == '__main__':
+    print(spell(sys.argv[1]))
