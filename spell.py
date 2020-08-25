@@ -154,6 +154,8 @@ BOUNDARIES = set('-!+/#:')
 
 PHONOLOGY = set([*CONSONANTS.keys(), *VOWELS.keys()]).union(BOUNDARIES)
 
+SUBSTITUTIONS = {}
+
 def thread(initial, *functions):
     nth = initial
     for fun in functions:
@@ -177,9 +179,17 @@ def parse(xsampa):
             segments.append({'sound': segment, 'type': 'boundary'})
     return segments
 
+def ends(segments): # impure
+    segments[0]['position'] = 'initial'
+    for i in range(1, len(segments) - 1):
+        segments[i]['position'] = 'medial'
+    segments[-1]['position'] = 'final'
+    return segments
+
 def spell(xsampa):
     return thread(xsampa,
-            parse
+            parse,
+            ends
             )
 
 if __name__ == '__main__':
